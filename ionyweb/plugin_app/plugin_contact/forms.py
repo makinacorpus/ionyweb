@@ -9,6 +9,8 @@ from ionyweb.forms import ModuloModelForm, IonywebContentForm
 import floppyforms as forms
 
 from models import Plugin_Contact
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Fieldset, HTML, Field
 
 
 class Plugin_ContactForm(IonywebContentForm, forms.Form):
@@ -16,10 +18,20 @@ class Plugin_ContactForm(IonywebContentForm, forms.Form):
     Contact form use to display the plugin
     """
 
-    name = forms.CharField(label=_(u'Name :'), required=False)
-    mail = forms.EmailField(label=_(u'Email *:'))
-    subject = forms.CharField(label=_(u'Object :'), required=False)
-    message = forms.CharField(label=_(u"Message *:"), widget=forms.Textarea)
+    #name = forms.CharField(label=_(u'Name'), required=False)
+    mail = forms.EmailField(label=_(u'Email'))
+    subject = forms.CharField(label=_(u'Objet'), required=False)
+    message = forms.CharField(label=_(u"Message"), widget=forms.Textarea)
+
+    def __init__(self, *args, **kwargs):
+        super(Plugin_ContactForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            'mail',
+            'subject',
+            'message'
+        )
 
     def send(self, mails=[], default_subject=""):
 

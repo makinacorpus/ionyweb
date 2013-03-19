@@ -14,6 +14,10 @@ class Plugin_Contact(AbstractPlugin):
                                                    u"If set it will prefix the subject of the email sent."))
 
     email = models.EmailField(_(u'email'))
+    address = models.TextField(u'Adresse', blank=True)
+    tel = models.CharField(u'Tél.', max_length=200, blank=True)
+    fax = models.CharField(u'Fax', max_length=200, blank=True)
+    opening = models.TextField(u'Horaires d\'ouverture', blank=True)
 
     def __unicode__(self):
         return u'Contact Form #%d : %s' % (self.pk, self.title)
