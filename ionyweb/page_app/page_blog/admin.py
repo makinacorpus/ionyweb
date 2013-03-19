@@ -21,12 +21,12 @@ class EntryAdmin(admin.ModelAdmin):
     """
     Administration interface options of ``Entry`` model.
     """
-    list_display = ('title', 'category', 'status', 'author')
+    list_display = ('title', 'category', 'status', 'author', 'a_la_une')
     search_fields = ('title', 'body')
     date_hierarchy = 'publication_date'
     fieldsets = (
         (_('Headline'), {'fields': ('blog', 'author', 'title', 'slug', 'category')}),
-        (_('Publication'), {'fields': ('publication_date', 'status')}),
+        (_('Publication'), {'fields': ('publication_date', 'status', 'a_la_une')}),
         (_('Body'), {'fields': ('body',)}),
     )
     save_on_top = True

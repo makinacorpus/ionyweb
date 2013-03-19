@@ -166,6 +166,7 @@ class Entry(models.Model):
                                             db_index=True)
     status = models.IntegerField(_('status'), choices=STATUS_CHOICES, default=STATUS_DEFAULT, db_index=True)
     body = models.TextField(_('body'))
+    a_la_une = models.BooleanField(u'à la une', default=False)
 
     objects = models.Manager()
     online_objects = EntryOnlineManager()
