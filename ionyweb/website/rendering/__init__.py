@@ -158,7 +158,7 @@ class RenderingContext(object):
         self.page = page
         self.theme = theme
         self._rendering_items = []
-        self._medias_set = set()
+        self._medias_list = []
         self._http_response = None
         self._page_title = []
         # Initialization
@@ -455,7 +455,7 @@ class RenderingContext(object):
     # ------------------
     def add_media(self, media):
         if media:
-            self._medias_set.add(media)
+            self._medias_list.append(media)
             
     def add_medias(self, medias=[]):
         try:
@@ -466,7 +466,7 @@ class RenderingContext(object):
 
     @property
     def medias(self):
-        return self._medias_set
+        return self._medias_list
 
     @property
     def html_medias(self):
