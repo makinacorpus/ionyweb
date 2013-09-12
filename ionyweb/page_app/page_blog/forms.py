@@ -10,6 +10,7 @@ from ionyweb.widgets import DatePicker
 from models import Entry, Category, PageApp_Blog
 
 from ionyweb.widgets import DateTimePicker, SlugWidget, DatePicker, TinyMCELargeTable
+from ionyweb.file_manager.widgets import FileManagerWidget
 
 
 class PageApp_BlogForm(ModuloModelForm):
@@ -39,9 +40,10 @@ class EntryForm(ModuloModelForm):
 
     class Meta:
         model = Entry
-        exclude = ('blog', )
+        exclude = ('blog', 'thumb')
         widgets = {
             'publication_date': DateTimePicker,
             'body': TinyMCELargeTable(attrs={'cols': 80, 'rows': 15,}),
             'slug': SlugWidget('title'),
+            'image': FileManagerWidget,
         }
