@@ -207,6 +207,6 @@ class Entry(models.Model):
                                       'slug': self.slug,
                             }, urlconf='ionyweb.page_app.page_blog.urls'))
 
-    #def save(self, *args, **kwargs):
-        #self.thumb = self.image[7:] # filter out /media
-        #super(Entry, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.thumb = self.image[7:] # filter out /media
+        super(Entry, self).save(*args, **kwargs)
