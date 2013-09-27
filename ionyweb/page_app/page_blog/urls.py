@@ -6,8 +6,8 @@ from django.conf.urls import patterns, url
 
 import django.views.generic
 import django.views.generic.list_detail
-from views import entries_queryset_view_to_app, categories_queryset_view_to_app
-from feeds import RssEntries, RssCategory
+from views import entries_queryset_view_to_app
+from feeds import RssEntries, RssTag
 
 urlpatterns = patterns('',
     url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[\w-]+)/$',
@@ -43,13 +43,6 @@ urlpatterns = patterns('',
         ),
         name='blog_year',
     ),
-    url(r'^(?P<slug>[\w-]+)/$',
-        categories_queryset_view_to_app(django.views.generic.list_detail.object_detail),
-        dict(
-            slug_field='slug'
-        ),
-        name='blog_category',
-    ),
     url(r'^$',
         entries_queryset_view_to_app(django.views.generic.date_based.archive_index),
         dict(
@@ -59,5 +52,5 @@ urlpatterns = patterns('',
     ),
 
     url(r'^feed/rss/$', RssEntries(), name='blog_rss_entries_feed'),
-    url(r'^feed/rss/(?P<slug>[\w-]+)/$', RssCategory(), name='blog_rss_category_feed'),
+    url(r'^feed/rss/(?P<slug>[\w-]+)/$', RssTag(), name='blog_rss_tag_feed'),
 )

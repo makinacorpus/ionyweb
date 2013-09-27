@@ -5,27 +5,17 @@ Administration interface options of ``blog`` application.
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from ionyweb.page_app.page_blog.models import PageApp_Blog, Category, Entry
-
-class CategoryAdmin(admin.ModelAdmin):
-    """
-    Administration interface options of ``Category`` model.
-    """
-    list_display = ('name', 'slug', 'creation_date', 'modification_date')
-    search_fields = ('name',)
-    date_hierarchy = 'creation_date'
-    save_on_top = True
-    prepopulated_fields = {'slug': ('name',)}
+from ionyweb.page_app.page_blog.models import PageApp_Blog, Entry
 
 class EntryAdmin(admin.ModelAdmin):
     """
     Administration interface options of ``Entry`` model.
     """
-    list_display = ('title', 'category', 'status', 'author', 'a_la_une')
+    list_display = ('title', 'status', 'author', 'a_la_une')
     search_fields = ('title', 'body')
     date_hierarchy = 'publication_date'
     fieldsets = (
-        (_('Headline'), {'fields': ('blog', 'author', 'title', 'slug', 'category')}),
+        (_('Headline'), {'fields': ('blog', 'author', 'title', 'slug', 'tags')}),
         (_('Publication'), {'fields': ('publication_date', 'status', 'a_la_une')}),
         (_('Body'), {'fields': ('body',)}),
     )
@@ -34,5 +24,4 @@ class EntryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
 
 admin.site.register(PageApp_Blog)
-admin.site.register(Category, CategoryAdmin)
 admin.site.register(Entry, EntryAdmin)

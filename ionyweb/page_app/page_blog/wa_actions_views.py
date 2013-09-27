@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from ionyweb.administration.actions.views import ActionAdminDetailView
+from coop_local.models import Tag
 
 class EntryActionAdminDetailView(ActionAdminDetailView):
     def get_new_form(self, *args, **kwargs):
@@ -15,12 +16,6 @@ class EntryActionAdminDetailView(ActionAdminDetailView):
 
 
     def _get_entry_form_kwargs(self, *args, **kwargs):
-        try:
-            app_obj = kwargs.pop('app_obj')
-            categories_set = app_obj.categories.all()
-        except KeyError:
-            categories_set = None
-
         website = self.request.website
         
         if self.request.is_superuser:
@@ -29,7 +24,6 @@ class EntryActionAdminDetailView(ActionAdminDetailView):
         else:
             authors_choices = [(self.request.user.pk, self.request.user.email)]
 
-        return {'categories_set': categories_set,
-                'authors_choices': authors_choices}
+        return {'authors_choices': authors_choices}
 
         

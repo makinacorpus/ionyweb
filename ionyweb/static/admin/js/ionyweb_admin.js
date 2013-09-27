@@ -139,6 +139,10 @@ admin.serialize = function(id) {
 		tinyMCE = undefined;
 	}
 
+        var tags_as_string = $("#as-values-id_tags__tagautosuggest").val();
+        $("#id_tags__tagautosuggest").remove();
+        $("#id_tags").val(tags_as_string);
+
 	console.log($(id).serialize());
 
 	return $(id).serialize();

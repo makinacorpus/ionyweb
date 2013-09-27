@@ -9,7 +9,7 @@ from django.utils.safestring import mark_safe
 from ionyweb.website.rendering import HTMLRendering
 from ionyweb.website.rendering.medias import JSAdminMedia, RSSMedia
 
-from models import PageApp_Blog, Category, Entry
+from models import PageApp_Blog, Entry
 
 try:
     from functools import wraps
@@ -37,23 +37,4 @@ def entries_queryset_view_to_app(view_func):
         else:
             return HTMLRendering(mark_safe(view_func(request, **dict_args).content),
                                  medias)
-    return __wrapped_view
-
-
-def categories_queryset_view_to_app(view_func):
-    @wraps(view_func, assigned=available_attrs(view_func))
-    def __wrapped_view(request, obj, **kwargs):
-        dict_args = dict(queryset=obj.online_categories.all())
-        dict_args.update(kwargs)
-        medias = [
-            RSSMedia('%sp/feed/rss/%s/' % (obj.get_absolute_url(),
-                                           kwargs['slug'])),
-            ]
-        if request.is_admin:
-            medias += ACTIONS_MEDIAS
-            return HTMLRendering(mark_safe(view_func(request, **dict_args).content),
-                                 medias)
-        else:
-            return HTMLRendering(mark_safe(view_func(request, **dict_args).content),
-                             medias)
     return __wrapped_view

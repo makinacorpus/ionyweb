@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from ionyweb.forms import ModuloModelForm
 from ionyweb.widgets import DatePicker
-from models import Entry, Category, PageApp_Blog
+from models import Entry, PageApp_Blog
 
 from ionyweb.widgets import DateTimePicker, SlugWidget, DatePicker, TinyMCELargeTable
 from ionyweb.file_manager.widgets import FileManagerWidget
@@ -18,24 +18,13 @@ class PageApp_BlogForm(ModuloModelForm):
     class Meta:
         model = PageApp_Blog
 
-
-class CategoryForm(ModuloModelForm):
-
-    class Meta:
-        model = Category
-        exclude = ('blog', )
-        widgets = {
-            'slug': SlugWidget('name'),
-        }
-
 class EntryForm(ModuloModelForm):
     author = forms.ModelChoiceField(label=_('author'),
                                     queryset=User.objects.all(), 
                                     empty_label=None)
 
-    def __init__(self, authors_choices, categories_set, *args, **kwargs):
+    def __init__(self, authors_choices, *args, **kwargs):
         super(EntryForm, self).__init__(*args, **kwargs)
-        self.fields['category'].queryset = categories_set
         self.fields['author'].choices = authors_choices
 
     class Meta:

@@ -8,7 +8,6 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.http import Http404
-from mptt.models import MPTTModel, TreeForeignKey
 
 from ionyweb.page.models import AbstractPageApp
 from ionyweb.page_app.page_blog.managers import CategoryOnlineManager, EntryOnlineManager
@@ -23,7 +22,6 @@ class PageApp_Blog(AbstractPageApp):
 
     class ActionsAdmin:
         actions_list = (
-            {'title':_(u'Edit categories'), 'callback': "admin.page_blog.edit_categories"},
             {'title':_(u'Edit entries'), 'callback': "admin.page_blog.edit_entries"},
             )
 
@@ -46,22 +44,6 @@ class PageApp_Blog(AbstractPageApp):
 
     online_entries = property(_get_online_entries)
 
-    def _get_online_categories(self):
-        """
-        Returns categories with entries "online" inside.
-        Access this through the property ``online_entry_set``.
-        """
-        from models import Entry
-        queryset =  self.categories.distinct().filter(entries__status=Entry.STATUS_ONLINE)
-
-        new_queryset = queryset.distinct().none() | queryset
-        for obj in queryset:
-            new_queryset = new_queryset | obj.get_ancestors().distinct()
-
-        return new_queryset
-        
-    online_categories = property(_get_online_categories)
-
     def get_absolute_url(self):
         return self.page.get().get_absolute_url()
 
@@ -77,69 +59,8 @@ class PageApp_Blog(AbstractPageApp):
             response += u"%s " % _(u'entry')
         else:
             response += u"%s " % _(u'entries')
-        categories = self.categories.count()
-        response += u" %s %d " % (_(u'and'), categories)
-        if categories <= 1:
-            response += u"%s " % _(u'category')
-        else:
-            response += u"%s " % _(u'categories')
             
         return response
-
-
-class Category(MPTTModel):
-    """
-    A blog category.
-    """
-    blog = models.ForeignKey(PageApp_Blog, related_name="categories")
-    name = models.CharField(_('name'), max_length=255)
-    slug = models.SlugField(_('slug'), max_length=255)
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
-    creation_date = models.DateTimeField(_('creation date'), auto_now_add=True)
-    modification_date = models.DateTimeField(_('edit date'), auto_now=True)
-
-    objects = models.Manager()
-    online_objects = CategoryOnlineManager()
-
-    class Meta:
-        unique_together = (("blog", "slug"),)
-        verbose_name = _('category')
-        verbose_name_plural = _('categories')
-        ordering = ('tree_id', 'lft')
-
-    class MPTTMeta:
-        level_attr = 'level'
-        order_insertion_by=['slug']
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    def get_title(self):
-        prefix = ''
-        for i in xrange(self.level):
-            prefix += '---'
-        return u'%s %s' % (prefix, self.name)
-
-    get_title.short_description = _('name')
-
-    def get_absolute_url(self):
-        return u"%s%s%s" % (self.blog.get_absolute_url(),
-                            settings.URL_PAGE_APP_SEP,
-                            reverse('blog_category', kwargs={'slug': self.slug,}, 
-                                    urlconf='ionyweb.page_app.page_blog.urls'))
-
-    def _get_online_entries(self):
-        """
-        Returns entries in this category with status of "online".
-        Access this through the property ``online_entry_set``.
-        """
-        from models import Entry        
-        return Entry.objects.distinct().filter(status=Entry.STATUS_ONLINE, 
-                                               category__lft__gte=self.lft, 
-                                               category__rght__lte=self.rght,
-                                               category__tree_id=self.tree_id).order_by('category__tree_id', 'category__lft')
-
-    online_entries = property(_get_online_entries)
 
 class Entry(models.Model):
     """
@@ -158,7 +79,6 @@ class Entry(models.Model):
     title = models.CharField(_('title'), max_length=255)
     slug = models.SlugField(_('slug'), max_length=255, unique_for_date='publication_date')
     author = models.ForeignKey('auth.User', verbose_name=_('author'))
-    category = TreeForeignKey(Category, verbose_name=_('category'), related_name="entries")
     creation_date = models.DateTimeField(_('creation date'), auto_now_add=True)
     modification_date = models.DateTimeField(_('modification date'), auto_now=True)
     publication_date = models.DateTimeField(_('publication date'), 
@@ -185,9 +105,9 @@ class Entry(models.Model):
         return u'%s' % self.title
     get_title.action_short_description=_(u'Title')
     
-    def get_category(self):
-        return u'%s' % self.category
-    get_category.action_short_description=_(u'Category')
+    def get_tags(self):
+        return u', '.join([tag.name for tag in self.tags.all()])
+    get_tags.action_short_description=_(u'Tags')
     
     def get_publication_date(self):
         return u'%s' % self.publication_date
@@ -210,3 +130,12 @@ class Entry(models.Model):
     def save(self, *args, **kwargs):
         self.thumb = self.image[7:] # filter out /media
         super(Entry, self).save(*args, **kwargs)
+
+
+from coop_tag.managers import TaggableManager
+from coop_local.models import TaggedItem
+t = TaggableManager(through=TaggedItem,
+        blank=True, verbose_name=_(u'Tags'),
+        help_text="Une liste de tags avec des virgules")
+t.contribute_to_class(Entry, "tags")
+

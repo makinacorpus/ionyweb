@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.syndication.views import Feed
 from django.contrib.sites.models import Site
 
-from ionyweb.page_app.page_blog.models import Category, Entry
+from ionyweb.page_app.page_blog.models import Entry
 
 class RssEntries(Feed):
     """
@@ -58,7 +58,7 @@ class RssEntries(Feed):
         """
         return item.publication_date
 
-class RssCategory(RssEntries):
+class RssTag(RssEntries):
     """
     RSS category.
     """
@@ -66,17 +66,17 @@ class RssCategory(RssEntries):
         """
         Channel title.
         """
-        return _('%(site_name)s: RSS %(category)s category') % {
+        return _('%(site_name)s: RSS %(tag)s tag') % {
             'site_name': obj.blog.title,
-            'category': obj.name,
+            'tag': obj.name,
         }
 
     def description(self, obj):
         """
         Channel description.
         """
-        return _('RSS feed of recent entries posted in the category %(category)s on %(site_name)s.') % {
-            'category': obj.name,
+        return _('RSS feed of recent entries posted with the tag %(tag)s on %(site_name)s.') % {
+            'tag': obj.name,
             'site_name': obj.blog.title,
         }
 
@@ -90,7 +90,7 @@ class RssCategory(RssEntries):
         """
         Object: the Category.
         """
-        return obj.online_categories.get(slug=kwargs['slug'])
+        return obj.online_tags.get(slug=kwargs['slug'])
 
     def items(self, obj):
         """
