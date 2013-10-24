@@ -8,7 +8,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 		       (r'^_jsi18n/$', 'django.views.i18n.javascript_catalog'),
-		       url(r'^_admin/doc/', include('django.contrib.admindocs.urls')),
+		       #url(r'^_admin/doc/', include('django.contrib.admindocs.urls')),
 		       url(r'^_admin/', include(admin.site.urls)),
 		       url(r'^_grappelli/', include('grappelli.urls')),
 		       url(r'^_install/', include('ionyweb.start_website.urls')),
