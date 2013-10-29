@@ -6,7 +6,7 @@ from django.conf.urls import patterns, url
 
 import django.views.generic
 import django.views.generic.list_detail
-from views import entries_queryset_view_to_app
+from views import entries_queryset_view_to_app, index_view
 from feeds import RssEntries, RssTag
 
 urlpatterns = patterns('',
@@ -44,10 +44,7 @@ urlpatterns = patterns('',
         name='blog_year',
     ),
     url(r'^$',
-        entries_queryset_view_to_app(django.views.generic.date_based.archive_index),
-        dict(
-            date_field='publication_date',
-        ),
+        index_view,
         name='blog',
     ),
 

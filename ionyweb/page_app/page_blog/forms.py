@@ -36,3 +36,14 @@ class EntryForm(ModuloModelForm):
             'slug': SlugWidget('title'),
             'image': FileManagerWidget,
         }
+
+
+class EntrySearch(forms.Form):
+    date = forms.DateField(required=False)
+    q = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder': 'Recherche libre : mot clés'}))
+
+    def __init__(self, *args, **kwargs):
+        super(EntrySearch, self).__init__(*args, **kwargs)
+        for name, field in self.fields.iteritems():
+            field.widget.attrs['class'] = 'form-control'
+
