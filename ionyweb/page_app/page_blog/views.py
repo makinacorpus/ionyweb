@@ -48,7 +48,7 @@ def entries_queryset_view_to_app(view_func):
 def index_view(request, page_app):
     form = EntrySearch(request.GET)
     if form.is_valid():
-        entries = Entry.objects
+        entries = page_app.online_entries.all()
         if request.GET.get('date'):
             date = form.cleaned_data['date']
             entries = entries.filter(publication_date__year=date.year,
