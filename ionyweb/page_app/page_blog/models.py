@@ -89,7 +89,7 @@ class Entry(models.Model):
     body = models.TextField(_('body'))
     a_la_une = models.BooleanField(u'à la une', default=False)
     image = models.CharField(_("image"), max_length=200, blank=True)
-    thumb = models.ImageField(upload_to='x', max_length=200, blank=True)
+    thumb = models.ImageField(_("image"), upload_to='articles/', max_length=200, blank=True)
 
     objects = models.Manager()
     online_objects = EntryOnlineManager()
@@ -128,7 +128,10 @@ class Entry(models.Model):
                             }, urlconf='ionyweb.page_app.page_blog.urls'))
 
     def save(self, *args, **kwargs):
-        self.thumb = self.image[7:] # filter out /media
+        if self.image:
+            self.thumb = self.image[7:] # filter out /media
+        elif self.thumb:
+            self.image = '/media/articles/' + self.thumb.name
         super(Entry, self).save(*args, **kwargs)
 
 
