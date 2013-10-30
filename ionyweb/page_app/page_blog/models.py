@@ -90,6 +90,8 @@ class Entry(models.Model):
     a_la_une = models.BooleanField(u'à la une', default=False)
     image = models.CharField(_("image"), max_length=200, blank=True)
     thumb = models.ImageField(_("image"), upload_to='articles/', max_length=200, blank=True)
+    activities = models.ManyToManyField('coop_local.ActivityNomenclature', verbose_name=u'Secteurs d\'activité', blank=True, null=True)
+    themes = models.ManyToManyField('coop_local.TransverseTheme', verbose_name=u'Thématiques', blank=True, null=True)
 
     objects = models.Manager()
     online_objects = EntryOnlineManager()

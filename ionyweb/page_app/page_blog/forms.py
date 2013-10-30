@@ -15,6 +15,8 @@ from tinymce.widgets import TinyMCE
 from ionyweb.widgets import DateTimePicker, SlugWidget, DatePicker, TinyMCELargeTable
 from ionyweb.file_manager.widgets import FileManagerWidget
 
+from coop_local.models import ActivityNomenclature, TransverseTheme
+
 
 class PageApp_BlogForm(ModuloModelForm):
 
@@ -44,6 +46,8 @@ class EntryForm(ModuloModelForm):
 
 class EntrySearch(forms.Form):
     date = forms.DateField(required=False)
+    activity = forms.ModelChoiceField(queryset=ActivityNomenclature.objects.filter(level=0), empty_label=u'Tout voir', required=False)
+    theme = forms.ModelChoiceField(queryset=TransverseTheme.objects.all(), empty_label=u'Tout voir', required=False)
     q = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder': 'Recherche libre : mot clés'}))
 
     def __init__(self, *args, **kwargs):
@@ -64,11 +68,15 @@ class FrontEntryForm(forms.ModelForm):
             'body',
             'thumb',
             'tags',
+            'activities',
+            'themes',
         )
 
     def __init__(self, *args, **kwargs):
         super(FrontEntryForm, self).__init__(*args, **kwargs)
         self.fields['tags'].help_text = u'Entrez des mots-clés séparés par une virgule.'
+        self.fields['activities'].help_text = u''
+        self.fields['themes'].help_text = u''
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
@@ -77,4 +85,6 @@ class FrontEntryForm(forms.ModelForm):
             'body',
             'thumb',
             'tags',
+            'activities',
+            'themes',
         )

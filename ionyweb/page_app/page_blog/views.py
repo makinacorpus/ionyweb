@@ -34,7 +34,14 @@ except ImportError:
 ACTIONS_MEDIAS = [
     JSAdminMedia('page_blog_actions.js'),
 ]
-
+EDIT_MEDIA = [
+    CSSMedia('tagger/css/coop_tag.css', prefix_file=''),
+    JSMedia('tagger/js/jquery.autoSuggest.minified.js', prefix_file=''),
+    JSMedia('../_tinymce/compressor/', prefix_file=''),
+    CSSMedia('select2/select2.css', prefix_file=''),
+    CSSMedia('css/select2-bootstrap3.css', prefix_file=''),
+    JSMedia('select2/select2.min.js', prefix_file=''),
+]
 
 def entries_queryset_view_to_app(view_func):
     @wraps(view_func, assigned=available_attrs(view_func))
@@ -58,12 +65,17 @@ def index_view(request, page_app):
     form = EntrySearch(request.GET)
     if form.is_valid():
         entries = page_app.online_entries.all()
-        if request.GET.get('date'):
+        if form.cleaned_data['date']:
             date = form.cleaned_data['date']
             entries = entries.filter(publication_date__year=date.year,
                                      publication_date__month=date.month,
                                      publication_date__day=date.day)
-        if request.GET.get('q'):
+        if form.cleaned_data['activity']:
+            descendants = form.cleaned_data['activity'].get_descendants(include_self=True)
+            entries = entries.filter(activities__in=descendants)
+        if form.cleaned_data['theme']:
+            entries = entries.filter(themes=form.cleaned_data['theme'])
+        if form.cleaned_data['q']:
             entries = entries.filter(
                 Q(title__icontains=form.cleaned_data['q']) |
                 Q(resume__icontains=form.cleaned_data['q']) |
@@ -115,13 +127,10 @@ def add_view(request, page_app):
             object_repr     = force_unicode(entry),
             action_flag     = ADDITION,
         )
-        return HttpResponseRedirect('/articles/p/mes-articles/')
+        return HttpResponseRedirect('/actualites/p/mes-articles/')
     return render_view('page_blog/edit.html',
                        {'object': page_app, 'form': form},
-                       [CSSMedia('tagger/css/coop_tag.css', prefix_file=''),
-                        JSMedia('tagger/js/jquery.autoSuggest.minified.js', prefix_file=''),
-                        JSMedia('../_tinymce/compressor/', prefix_file='')] + 
-                       (ACTIONS_MEDIAS if request.is_admin else []),
+                       EDIT_MEDIA + (ACTIONS_MEDIAS if request.is_admin else []),
                        context_instance=RequestContext(request))
 
 
@@ -157,10 +166,7 @@ def update_view(request, page_app, pk):
         return HttpResponseRedirect('/actualites/p/mes-articles/')
     return render_view('page_blog/edit.html',
                        {'object': page_app, 'form': form},
-                       [CSSMedia('tagger/css/coop_tag.css', prefix_file=''),
-                        JSMedia('tagger/js/jquery.autoSuggest.minified.js', prefix_file=''),
-                        JSMedia('../_tinymce/compressor/', prefix_file='')] +
-                       (ACTIONS_MEDIAS if request.is_admin else []),
+                       EDIT_MEDIA + (ACTIONS_MEDIAS if request.is_admin else []),
                        context_instance=RequestContext(request))
 
 
