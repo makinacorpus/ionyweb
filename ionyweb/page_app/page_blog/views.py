@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
 from django.template.loader import render_to_string
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.views.generic.date_based import object_detail as django_object_detail
 from django.utils.decorators import available_attrs
 from django.utils.safestring import mark_safe
@@ -107,6 +107,7 @@ def index_view(request, page_app):
 
 @login_required
 def add_view(request, page_app):
+    return HttpResponseForbidden('Cette fonctionnalité est désactivée.')
     #org = Organization.mine(request)
     #if org is None:
         #return HttpResponseForbidden('Votre compte n\'est pas attaché à une organisation.')
@@ -136,6 +137,7 @@ def add_view(request, page_app):
 
 @login_required
 def delete_view(request, page_app, pk):
+    return HttpResponseForbidden('Cette fonctionnalité est désactivée.')
     entry = get_object_or_404(Entry, pk=pk, author=request.user)
     LogEntry.objects.log_action(
         user_id         = request.user.pk,
@@ -151,6 +153,7 @@ def delete_view(request, page_app, pk):
 
 @login_required
 def update_view(request, page_app, pk):
+    return HttpResponseForbidden('Cette fonctionnalité est désactivée.')
     entry = get_object_or_404(Entry, pk=pk, author=request.user)
     form = FrontEntryForm(request.POST or None, request.FILES or None, instance=entry)
     if form.is_valid():
