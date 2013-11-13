@@ -107,19 +107,19 @@ def index_view(request, page_app):
 
 @login_required
 def add_view(request, page_app):
-    return HttpResponseForbidden('Cette fonctionnalité est désactivée.')
     #org = Organization.mine(request)
     #if org is None:
         #return HttpResponseForbidden('Votre compte n\'est pas attaché à une organisation.')
     form = FrontEntryForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         entry = form.save(commit=False)
+        if 'propose' in request.POST and entry.status == 0:
+            entry.status = 2
         entry.blog = page_app
         entry.author = request.user
         entry.slug = unicodedata.normalize('NFKD', entry.title).encode('ascii', 'ignore')
         entry.slug = unicode(re.sub('[^\w\s-]', '', entry.slug).strip().lower())
         entry.slug = re.sub('[-\s]+', '-', entry.slug)
-        entry.status = 1
         entry.save()
         LogEntry.objects.log_action(
             user_id         = request.user.pk,
@@ -137,7 +137,6 @@ def add_view(request, page_app):
 
 @login_required
 def delete_view(request, page_app, pk):
-    return HttpResponseForbidden('Cette fonctionnalité est désactivée.')
     entry = get_object_or_404(Entry, pk=pk, author=request.user)
     LogEntry.objects.log_action(
         user_id         = request.user.pk,
@@ -153,11 +152,13 @@ def delete_view(request, page_app, pk):
 
 @login_required
 def update_view(request, page_app, pk):
-    return HttpResponseForbidden('Cette fonctionnalité est désactivée.')
     entry = get_object_or_404(Entry, pk=pk, author=request.user)
     form = FrontEntryForm(request.POST or None, request.FILES or None, instance=entry)
     if form.is_valid():
-        form.save()
+        form.save(commit=False)
+        if 'propose' in request.POST and entry.status == 0:
+            entry.status = 2
+        entry.save()
         LogEntry.objects.log_action(
             user_id         = request.user.pk,
             content_type_id = ContentType.objects.get_for_model(Entry).pk,

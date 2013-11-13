@@ -68,10 +68,14 @@ class Entry(models.Model):
     """
     STATUS_OFFLINE = 0
     STATUS_ONLINE = 1
+    STATUS_PROPOSED = 2
+    STATUS_REFUSED = 3
     STATUS_DEFAULT = STATUS_OFFLINE
     STATUS_CHOICES = (
-        (STATUS_OFFLINE, _('Offline')),
-        (STATUS_ONLINE, _('Online')),
+        (STATUS_OFFLINE, u'En cours de rédaction'),
+        (STATUS_ONLINE, u'Validé'),
+        (STATUS_PROPOSED, u'Proposé'),
+        (STATUS_REFUSED, u'Refusé'),
     )
 
     blog = models.ForeignKey(PageApp_Blog, related_name="entries")
