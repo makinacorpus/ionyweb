@@ -136,9 +136,9 @@ var LinkDialog = {
 	fillTargetList : function(id) {
 		var dom = tinyMCEPopup.dom, lst = dom.get(id), v;
 
-		lst.options[lst.options.length] = new Option(tinyMCEPopup.getLang('not_set'), '');
-		lst.options[lst.options.length] = new Option(tinyMCEPopup.getLang('advanced_dlg.link_target_same'), '_self');
-		lst.options[lst.options.length] = new Option(tinyMCEPopup.getLang('advanced_dlg.link_target_blank'), '_blank');
+                lst.options[lst.options.length] = new Option(tinyMCEPopup.getLang('advanced_dlg.link_target_blank'), '_blank');
+                lst.options[lst.options.length] = new Option(tinyMCEPopup.getLang('advanced_dlg.link_target_same'), '_self');
+                lst.options[lst.options.length] = new Option(tinyMCEPopup.getLang('not_set'), '');
 
 		if (v = tinyMCEPopup.getParam('theme_advanced_link_targets')) {
 			tinymce.each(v.split(','), function(v) {
