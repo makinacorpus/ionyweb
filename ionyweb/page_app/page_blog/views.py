@@ -121,6 +121,7 @@ def add_view(request, page_app):
         entry.slug = unicode(re.sub('[^\w\s-]', '', entry.slug).strip().lower())
         entry.slug = re.sub('[-\s]+', '-', entry.slug)
         entry.save()
+        form.save_m2m()
         LogEntry.objects.log_action(
             user_id         = request.user.pk,
             content_type_id = ContentType.objects.get_for_model(Entry).pk,
@@ -159,6 +160,7 @@ def update_view(request, page_app, pk):
         if 'propose' in request.POST and entry.status == 0:
             entry.status = 2
         entry.save()
+        form.save_m2m()
         LogEntry.objects.log_action(
             user_id         = request.user.pk,
             content_type_id = ContentType.objects.get_for_model(Entry).pk,
