@@ -20,11 +20,6 @@ class PageApp_Blog(AbstractPageApp):
     class Meta:
         verbose_name_plural = verbose_name = _("Blog App")
 
-    class ActionsAdmin:
-        actions_list = (
-            {'title':_(u'Edit entries'), 'callback': "admin.page_blog.edit_entries"},
-            )
-
     def __unicode__(self):
         if self.title:
             if len(self.title) > 50:
@@ -92,7 +87,6 @@ class Entry(models.Model):
     resume = models.TextField(u'résumé', blank=True)
     body = models.TextField(_('body'))
     a_la_une = models.BooleanField(u'à la une', default=False)
-    image = models.CharField(_("image"), max_length=200, blank=True)
     thumb = models.ImageField(_("image"), upload_to='articles/', max_length=200, blank=True)
     activities = models.ManyToManyField('coop_local.ActivityNomenclature', verbose_name=u'Secteurs d\'activité', blank=True, null=True)
     themes = models.ManyToManyField('coop_local.TransverseTheme', verbose_name=u'Thématiques', blank=True, null=True)
@@ -132,13 +126,6 @@ class Entry(models.Model):
                                       'day': self.publication_date.strftime('%d'),
                                       'slug': self.slug,
                             }, urlconf='ionyweb.page_app.page_blog.urls'))
-
-    def save(self, *args, **kwargs):
-        if self.image:
-            self.thumb = self.image[7:] # filter out /media
-        elif self.thumb:
-            self.image = '/media/articles/' + self.thumb.name
-        super(Entry, self).save(*args, **kwargs)
 
 
 from coop_tag.managers import TaggableManager

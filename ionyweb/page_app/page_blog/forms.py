@@ -24,26 +24,6 @@ class PageApp_BlogForm(ModuloModelForm):
         model = PageApp_Blog
 
 
-class EntryForm(ModuloModelForm):
-    author = forms.ModelChoiceField(label=_('author'),
-                                    queryset=User.objects.all(), 
-                                    empty_label=None)
-
-    def __init__(self, authors_choices, *args, **kwargs):
-        super(EntryForm, self).__init__(*args, **kwargs)
-        self.fields['author'].choices = authors_choices
-
-    class Meta:
-        model = Entry
-        exclude = ('blog', 'thumb')
-        widgets = {
-            'publication_date': DateTimePicker,
-            'body': TinyMCELargeTable(attrs={'cols': 80, 'rows': 15,}),
-            'slug': SlugWidget('title'),
-            'image': FileManagerWidget,
-        }
-
-
 class EntrySearch(forms.Form):
     date = forms.DateField(required=False)
     activity = forms.ModelChoiceField(queryset=ActivityNomenclature.objects.filter(level=0), empty_label=u'Tout voir', required=False)
