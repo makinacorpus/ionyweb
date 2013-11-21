@@ -16,6 +16,7 @@ from ionyweb.page_app.page_blog.managers import CategoryOnlineManager, EntryOnli
 class PageApp_Blog(AbstractPageApp):
     
     title = models.CharField(_(u"title"), max_length=100)
+    search = models.BooleanField(u"Afficher la barre de recherche")
 
     class Meta:
         verbose_name_plural = verbose_name = _("Blog App")
