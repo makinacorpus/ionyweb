@@ -28,13 +28,13 @@ class EntryAdmin(admin.ModelAdmin):
     Administration interface options of ``Entry`` model.
     """
     form = EntryAdminForm
-    list_display = ('title', 'blog', 'status', 'author', 'publication_date', 'a_la_une')
-    list_filter = ('status', 'blog', )
+    list_display = ('title', 'blog', 'status', 'author', 'publication_date', 'a_la_une', 'en_direct', 'zoom_sur')
+    list_filter = ('status', 'blog', 'a_la_une', 'en_direct', 'zoom_sur')
     search_fields = ('title', 'body', 'resume')
     date_hierarchy = 'publication_date'
     fieldsets = (
         (_('Headline'), {'fields': ('blog', 'author', 'title', 'slug')}),
-        (_('Publication'), {'fields': ('publication_date', 'status', 'a_la_une')}),
+        (_('Publication'), {'fields': ('publication_date', 'status', 'a_la_une', 'en_direct', 'zoom_sur')}),
         (_('Body'), {'fields': ('resume', 'body', 'thumb')}),
         (_('Classification'), {'fields': ('activities', 'themes', 'tags')}),
     )
@@ -44,7 +44,7 @@ class EntryAdmin(admin.ModelAdmin):
 
 class BlogAdmin(admin.ModelAdmin):
 
-    list_display = ('title', 'front_page')
+    list_display = ('front_page', 'title')
 
     def front_page(self, obj):
         pages = obj.page.all()
