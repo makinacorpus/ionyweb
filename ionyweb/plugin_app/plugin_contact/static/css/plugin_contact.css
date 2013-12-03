@@ -4,3 +4,7 @@ label {
 	clear: both;
 	width: 120px;
 }
+
+#s2id_id_activity {
+    max-width: 100%;
+}
