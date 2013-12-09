@@ -10,6 +10,7 @@ from chosen import widgets as chosenwidgets
 from ionyweb.page_app.page_blog.models import PageApp_Blog, Entry
 
 from tinymce.widgets import AdminTinyMCE
+from haystack import connections
 
 
 class EntryAdminForm(forms.ModelForm):
@@ -32,6 +33,7 @@ class EntryAdmin(admin.ModelAdmin):
     list_filter = ('status', 'blog', 'a_la_une', 'en_direct', 'zoom_sur')
     search_fields = ('title', 'body', 'resume')
     date_hierarchy = 'publication_date'
+    change_form_template = 'admintools_bootstrap/tabbed_change_form.html'
     fieldsets = (
         (_('Headline'), {'fields': ('blog', 'author', 'title', 'slug')}),
         (_('Publication'), {'fields': ('publication_date', 'status', 'a_la_une', 'en_direct', 'zoom_sur')}),
@@ -40,6 +42,11 @@ class EntryAdmin(admin.ModelAdmin):
     )
     #radio_fields = {'status': admin.VERTICAL}
     prepopulated_fields = {'slug': ('title',)}
+
+    def save_related(self, request, form, formsets, change):
+        super(EntryAdmin, self).save_related(request, form, formsets, change)
+        ui = connections.all()[0].get_unified_index()
+        ui.get_index(Entry).update_object(instance=form.instance)
 
 
 class BlogAdmin(admin.ModelAdmin):
