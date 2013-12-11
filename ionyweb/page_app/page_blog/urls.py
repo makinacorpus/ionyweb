@@ -48,7 +48,7 @@ urlpatterns = patterns('',
     url(r'^ajouter/$', add_view),
     url(r'^(?P<pk>\d+)/modifier/$', update_view),
     url(r'^(?P<pk>\d+)/supprimer/$', delete_view),
-    url(r'^mes-articles/$', my_view),
+    url(r'^mes-actualites/$', my_view),
 
     url(r'^feed/rss/$', RssEntries(), name='blog_rss_entries_feed'),
     url(r'^feed/rss/(?P<slug>[\w-]+)/$', RssTag(), name='blog_rss_tag_feed'),

@@ -129,7 +129,7 @@ def add_view(request, page_app):
             object_repr     = force_unicode(entry),
             action_flag     = ADDITION,
         )
-        return HttpResponseRedirect('/actualites/p/mes-articles/')
+        return HttpResponseRedirect('/actualites/p/mes-actualites/')
     return render_view('page_blog/edit.html',
                        {'object': page_app, 'form': form},
                        EDIT_MEDIA + (ACTIONS_MEDIAS if request.is_admin else []),
@@ -148,7 +148,7 @@ def delete_view(request, page_app, pk):
         change_message  = u'Article "%s" supprimé.' % force_unicode(entry)
     )
     entry.delete()
-    return HttpResponseRedirect('/actualites/p/mes-articles/')
+    return HttpResponseRedirect('/actualites/p/mes-actualites/')
 
 
 @login_required
@@ -167,9 +167,9 @@ def update_view(request, page_app, pk):
             object_id       = entry.pk,
             object_repr     = force_unicode(entry),
             action_flag     = CHANGE,
-            change_message  = u'%s modifié pour l\'article "%s".' % (get_text_list(form.changed_data, _('and')), force_unicode(entry))
+            change_message  = u'%s modifié pour l\'actualité "%s".' % (get_text_list(form.changed_data, _('and')), force_unicode(entry))
         )
-        return HttpResponseRedirect('/actualites/p/mes-articles/')
+        return HttpResponseRedirect('/actualites/p/mes-actualités/')
     return render_view('page_blog/edit.html',
                        {'object': page_app, 'form': form},
                        EDIT_MEDIA + (ACTIONS_MEDIAS if request.is_admin else []),
