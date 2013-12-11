@@ -38,7 +38,7 @@ class EntrySearch(forms.Form):
 
 class FrontEntryForm(forms.ModelForm):
 
-    body = forms.CharField(widget=TinyMCE(mce_attrs=settings.TINYMCE_FRONTEND_CONFIG), label=u'Corps')
+    body = forms.CharField(widget=TinyMCE(mce_attrs=settings.TINYMCE_FRONTEND_CONFIG), label=u'Contenu')
 
     class Meta:
         model = Entry
