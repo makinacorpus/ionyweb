@@ -169,7 +169,7 @@ def update_view(request, page_app, pk):
             action_flag     = CHANGE,
             change_message  = u'%s modifié pour l\'actualité "%s".' % (get_text_list(form.changed_data, _('and')), force_unicode(entry))
         )
-        return HttpResponseRedirect('/actualites/p/mes-actualités/')
+        return HttpResponseRedirect('/actualites/p/mes-actualites/')
     return render_view('page_blog/edit.html',
                        {'object': page_app, 'form': form},
                        EDIT_MEDIA + (ACTIONS_MEDIAS if request.is_admin else []),
