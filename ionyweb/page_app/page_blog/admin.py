@@ -33,7 +33,7 @@ class EntryAdmin(admin.ModelAdmin):
     list_filter = ('status', 'blog', 'a_la_une', 'en_direct', 'zoom_sur')
     search_fields = ('title', 'body', 'resume')
     date_hierarchy = 'publication_date'
-    change_form_template = 'admintools_bootstrap/tabbed_change_form.html'
+    change_form_template = 'admin/page_blog/pageapp_blog/tabbed_change_form.html'
     fieldsets = (
         (_('Headline'), {'fields': ('blog', 'author', 'title', 'slug')}),
         (_('Publication'), {'fields': ('publication_date', 'status', 'a_la_une', 'en_direct', 'zoom_sur')}),
