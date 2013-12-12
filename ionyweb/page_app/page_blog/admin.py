@@ -5,6 +5,7 @@ Administration interface options of ``blog`` application.
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django import forms
+from django.contrib.auth.models import User
 from chosen import widgets as chosenwidgets
 
 from ionyweb.page_app.page_blog.models import PageApp_Blog, Entry
@@ -42,6 +43,28 @@ class EntryAdmin(admin.ModelAdmin):
     )
     #radio_fields = {'status': admin.VERTICAL}
     prepopulated_fields = {'slug': ('title',)}
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "blog":
+            try:
+                kwargs['initial'] = PageApp_Blog.objects.get(title='Actualités')
+            except PageApp_Blog.DoesNotExist:
+                pass
+        if db_field.name == "author":
+            kwargs['queryset'] = User.objects.filter(is_staff=True).order_by('username')
+            if not request.user.is_superuser:
+                kwargs["queryset"] = User.objects.filter(pk=request.user.pk)
+            kwargs['initial'] = request.user
+        field = super(EntryAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name == "author":
+            field.label_from_instance = lambda(obj): "%s (%s %s)" % (obj.username, obj.first_name, obj.last_name)
+        return field
+
+    def queryset(self, request):
+        qs = super(EntryAdmin, self).queryset(request)
+        if not request.user.is_superuser:
+            qs = qs.filter(author=request.user)
+        return qs
 
     def save_related(self, request, form, formsets, change):
         super(EntryAdmin, self).save_related(request, form, formsets, change)
