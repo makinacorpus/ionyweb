@@ -30,14 +30,14 @@ class EntryAdmin(admin.ModelAdmin):
     Administration interface options of ``Entry`` model.
     """
     form = EntryAdminForm
-    list_display = ('title', 'blog', 'status', 'author', 'publication_date', 'a_la_une', 'en_direct', 'zoom_sur')
-    list_filter = ('status', 'blog', 'a_la_une', 'en_direct', 'zoom_sur')
+    list_display = ('title', 'blog', 'status', 'author', 'publication_date', 'a_la_une', 'zoom_sur')
+    list_filter = ('status', 'blog', 'a_la_une', 'zoom_sur')
     search_fields = ('title', 'body', 'resume')
     date_hierarchy = 'publication_date'
     change_form_template = 'admin/page_blog/pageapp_blog/tabbed_change_form.html'
     fieldsets = (
         (_('Headline'), {'fields': ('blog', 'author', 'title', 'slug')}),
-        (_('Publication'), {'fields': ('publication_date', 'status', 'a_la_une', 'en_direct', 'zoom_sur')}),
+        (_('Publication'), {'fields': ('publication_date', 'status', 'a_la_une', 'zoom_sur')}),
         (_('Body'), {'fields': ('resume', 'body', 'thumb')}),
         (_('Classification'), {'fields': ('activities', 'themes', 'tags')}),
     )
