@@ -6,6 +6,8 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.admin.util import flatten_fieldsets
+from django.utils.timezone import now
 from chosen import widgets as chosenwidgets
 
 from ionyweb.page_app.page_blog.models import PageApp_Blog, Entry
@@ -16,6 +18,10 @@ from haystack import connections
 
 class EntryAdminForm(forms.ModelForm):
     body = forms.CharField(widget=AdminTinyMCE(attrs={'cols': 80, 'rows': 60}), required=False, label='Contenu')
+
+    def __init__(self, *args, **kwargs):
+        super(EntryAdminForm, self).__init__(*args, **kwargs)
+        self.fields['publication_date'].initial = now()
 
     class Meta:
         model = Entry
@@ -41,8 +47,25 @@ class EntryAdmin(admin.ModelAdmin):
         (_('Body'), {'fields': ('resume', 'body', 'thumb')}),
         (_('Classification'), {'fields': ('activities', 'themes', 'tags')}),
     )
+    restricted_fieldsets = (
+        (_('Headline'), {'fields': ('blog', 'author', 'title', 'slug')}),
+        (_('Publication'), {'fields': ('publication_date', 'status')}),
+        (_('Body'), {'fields': ('resume', 'body', 'thumb')}),
+        (_('Classification'), {'fields': ('activities', 'themes', 'tags')}),
+    )
     #radio_fields = {'status': admin.VERTICAL}
     prepopulated_fields = {'slug': ('title',)}
+
+    def get_fieldsets(self, request, obj=None):
+        if request.user.is_superuser:
+            return super(EntryAdmin, self).get_fieldsets(request, obj)
+        return self.restricted_fieldsets
+
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Workaround bug http://code.djangoproject.com/ticket/9360 (thanks to peritus)
+        """
+        return super(EntryAdmin, self).get_form(request, obj, fields=flatten_fieldsets(self.get_fieldsets(request, obj)))
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "blog":
