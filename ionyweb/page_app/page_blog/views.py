@@ -17,6 +17,7 @@ from django.utils.translation import ugettext as _
 import unicodedata
 import re
 from django.shortcuts import get_object_or_404
+from django.contrib.sites.models import Site
 
 from ionyweb.website.rendering import HTMLRendering
 from ionyweb.website.rendering.medias import CSSMedia, JSMedia, JSAdminMedia, RSSMedia
@@ -129,7 +130,10 @@ def add_view(request, page_app):
             object_repr     = force_unicode(entry),
             action_flag     = ADDITION,
         )
-        return HttpResponseRedirect('/actualites/p/mes-actualites/')
+        if 'propose' in request.POST:
+            return HttpResponseRedirect('/actualites/p/mes-actualites/feedback/')
+        else:
+            return HttpResponseRedirect('/actualites/p/mes-actualites/')
     return render_view('page_blog/edit.html',
                        {'object': page_app, 'form': form},
                        EDIT_MEDIA + (ACTIONS_MEDIAS if request.is_admin else []),
@@ -169,7 +173,10 @@ def update_view(request, page_app, pk):
             action_flag     = CHANGE,
             change_message  = u'%s modifié pour l\'actualité "%s".' % (get_text_list(form.changed_data, _('and')), force_unicode(entry))
         )
-        return HttpResponseRedirect('/actualites/p/mes-actualites/')
+        if 'propose' in request.POST:
+            return HttpResponseRedirect('/actualites/p/mes-actualites/feedback/')
+        else:
+            return HttpResponseRedirect('/actualites/p/mes-actualites/')
     return render_view('page_blog/edit.html',
                        {'object': page_app, 'form': form},
                        EDIT_MEDIA + (ACTIONS_MEDIAS if request.is_admin else []),
@@ -181,5 +188,12 @@ def my_view(request, page_app):
     entries = page_app.entries.filter(author=request.user).order_by('-publication_date')
     return render_view('page_blog/my_entries.html',
                        {'object': page_app, 'entries': entries},
+                       ACTIONS_MEDIAS if request.is_admin else [],
+                       context_instance=RequestContext(request))
+
+
+def feedback_view(request, page_app):
+    return render_view('page_blog/feedback.html',
+                       {'object': page_app, 'slug': settings.REGION_SLUG, 'site': Site.objects.get_current().domain},
                        ACTIONS_MEDIAS if request.is_admin else [],
                        context_instance=RequestContext(request))

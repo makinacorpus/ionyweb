@@ -7,7 +7,7 @@ from django.conf.urls import patterns, url
 import django.views.generic
 import django.views.generic.list_detail
 from views import (entries_queryset_view_to_app, index_view, add_view,
-    update_view, delete_view, my_view)
+    update_view, delete_view, my_view, feedback_view)
 from feeds import RssEntries, RssTag
 
 urlpatterns = patterns('',
@@ -49,6 +49,7 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/modifier/$', update_view),
     url(r'^(?P<pk>\d+)/supprimer/$', delete_view),
     url(r'^mes-actualites/$', my_view),
+    url(r'^mes-actualites/feedback/$', feedback_view),
 
     url(r'^feed/rss/$', RssEntries(), name='blog_rss_entries_feed'),
     url(r'^feed/rss/(?P<slug>[\w-]+)/$', RssTag(), name='blog_rss_tag_feed'),
