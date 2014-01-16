@@ -94,6 +94,9 @@ class EntryAdmin(admin.ModelAdmin):
         ui = connections.all()[0].get_unified_index()
         ui.get_index(Entry).update_object(instance=form.instance)
 
+    class Media:
+        js = ('mce_filebrowser/js/filebrowser_init.js',)
+
 
 class BlogAdmin(admin.ModelAdmin):
 
