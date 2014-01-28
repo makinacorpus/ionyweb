@@ -74,7 +74,7 @@ class EntryAdmin(admin.ModelAdmin):
             except PageApp_Blog.DoesNotExist:
                 pass
         if db_field.name == "author":
-            kwargs['queryset'] = User.objects.filter(is_staff=True).order_by('username')
+            kwargs['queryset'] = User.objects.order_by('username')
             if not request.user.is_superuser:
                 kwargs["queryset"] = User.objects.filter(pk=request.user.pk)
             kwargs['initial'] = request.user
