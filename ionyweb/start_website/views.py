@@ -15,15 +15,16 @@ from ionyweb.page.models import Page
 from django.utils.translation import ugettext as _
 
 def index(request):
-    if WebSite.objects.count() > 0:
-        # Only to set up the first website
+    n = WebSite.objects.count()
+    if n > 1:
+        # Only to set up the 2 firsts websites
         raise Http404
 
     if request.method == "POST":
         form = StartWebsite(request.POST)
         if form.is_valid():
             # 1. Create domain name
-            site = Site.objects.get(pk=1)
+            site = Site.objects.get(pk=n+1)
             site.name = form.cleaned_data['name']
             site.domain = form.cleaned_data['domain']
             site.save()
