@@ -9,6 +9,9 @@ from django.contrib.auth.models import User
 from django.contrib.admin.util import flatten_fieldsets
 from django.utils.timezone import now
 from chosen import widgets as chosenwidgets
+from django.contrib.sites.models import Site
+from django.conf import settings
+from coop_local.mixed_email import send_mixed_email
 
 from ionyweb.page_app.page_blog.models import PageApp_Blog, Entry
 
@@ -93,6 +96,29 @@ class EntryAdmin(admin.ModelAdmin):
         super(EntryAdmin, self).save_related(request, form, formsets, change)
         ui = connections.all()[0].get_unified_index()
         ui.get_index(Entry).update_object(instance=form.instance)
+
+    def save_model(self, request, obj, form, change):
+        """Send an email if just validated"""
+        print 'save'
+        if change and obj.status == Entry.STATUS_ONLINE:
+            print 'changed V'
+            if Entry.objects.get(pk=obj.pk).status != Entry.STATUS_ONLINE:
+                print 'old not V'
+                from ionyweb.plugin_app.plugin_contact.models import Plugin_Contact
+                try:
+                    sender = Plugin_Contact.objects.all()[0].email
+                except IndexError:
+                    sender = None
+                dests = obj.author.email
+                site = Site.objects.get_current().domain
+                subject = u"Votre actualité est publiés sur la plateforme %s" % site
+                context = {
+                    'site': site,
+                    'slug': settings.REGION_SLUG,
+                    'entry': obj,
+                }
+                send_mixed_email(sender, dests, subject, 'email/actu_validation', context)
+        super(EntryAdmin, self).save_model(request, obj, form, change)
 
     class Media:
         js = ('mce_filebrowser/js/filebrowser_init.js',)
