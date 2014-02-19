@@ -19,11 +19,12 @@ class HTMLRendering:
     Basic item which contains informations about
     plugin or app.
     """
-    def __init__(self, content, medias=[], title=None):
+    def __init__(self, content, medias=[], title=None, http_headers={}):
         self.status_code = 200
         self.content = content
         self.title = title
         self.medias = medias
+        self.http_headers = http_headers
 
     def __unicode__(self):
         return self.content
@@ -73,6 +74,10 @@ class RenderingItem(object):
     @property
     def medias(self):
         return self.html_rendering.medias
+
+    @property
+    def http_headers(self):
+        return self.html_rendering.http_headers
 
     @property
     def title(self):
@@ -161,6 +166,7 @@ class RenderingContext(object):
         self._medias_list = []
         self._http_response = None
         self._page_title = []
+        self.http_headers = {}
         # Initialization
         self._populate_rendering_items()
 
@@ -178,6 +184,8 @@ class RenderingContext(object):
                     self._rendering_items.append(rendering_app)
                     # -- Add medias in medias list
                     self.add_medias(rendering_app.medias)
+                    # -- Add http headers in http headers list
+                    self.add_http_headers(rendering_app.http_headers)
                     if rendering_app.title is not None:
                         self._page_title.append(rendering_app.title)
                 else:
@@ -463,6 +471,9 @@ class RenderingContext(object):
                 self.add_media(media)
         except TypeError:
             pass
+
+    def add_http_headers(self, http_headers={}):
+        self.http_headers.update(http_headers)
 
     @property
     def medias(self):
