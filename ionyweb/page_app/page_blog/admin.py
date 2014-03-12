@@ -111,7 +111,7 @@ class EntryAdmin(admin.ModelAdmin):
                     sender = None
                 dests = obj.author.email
                 site = Site.objects.get_current().domain
-                subject = u"Votre actualité est publiés sur la plateforme %s" % site
+                subject = u"Votre actualité est publiée sur la plateforme %s" % site
                 context = {
                     'site': site,
                     'slug': settings.REGION_SLUG,
