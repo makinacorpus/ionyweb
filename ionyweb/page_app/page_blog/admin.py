@@ -99,11 +99,8 @@ class EntryAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         """Send an email if just validated"""
-        print 'save'
         if change and obj.status == Entry.STATUS_ONLINE:
-            print 'changed V'
             if Entry.objects.get(pk=obj.pk).status != Entry.STATUS_ONLINE:
-                print 'old not V'
                 from ionyweb.plugin_app.plugin_contact.models import Plugin_Contact
                 try:
                     sender = Plugin_Contact.objects.all()[0].email
@@ -117,7 +114,8 @@ class EntryAdmin(admin.ModelAdmin):
                     'slug': settings.REGION_SLUG,
                     'entry': obj,
                 }
-                send_mixed_email(sender, dests, subject, 'email/actu_validation', context)
+                if dests:
+                    send_mixed_email(sender, dests, subject, 'email/actu_validation', context)
         super(EntryAdmin, self).save_model(request, obj, form, change)
 
     class Media:
