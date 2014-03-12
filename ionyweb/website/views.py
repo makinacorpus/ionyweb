@@ -90,9 +90,12 @@ def render_website(request, path_info, render_content_only=False):
                                     {'rendering_context': rendering_context},
                                     context_instance=RequestContext(request))
         else:
-            return render_to_response(rendering_context.theme_templates,
+            response = render_to_response(rendering_context.theme_templates,
                                       {'rendering_context': rendering_context},
                                       context_instance=RequestContext(request))
+            for key, val in rendering_context.http_headers.iteritems():
+                response[key] = val
+            return response
 
 
 

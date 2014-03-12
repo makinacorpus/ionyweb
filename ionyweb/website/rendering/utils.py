@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from ionyweb.website.rendering import HTMLRendering
 
 
-def render_view(template_name, params={}, medias=(), context_instance=None, is_admin_view=False, title=None):
+def render_view(template_name, params={}, medias=(), context_instance=None, is_admin_view=False, title=None, http_headers={}):
     """
     Returns an HTMLRendering object.
 
@@ -23,4 +23,4 @@ def render_view(template_name, params={}, medias=(), context_instance=None, is_a
     else:
         # AdminMedias are not used
         rendering_medias = tuple([media for media in medias if not media.admin])
-    return HTMLRendering(content, rendering_medias, title=title)
+    return HTMLRendering(content, rendering_medias, title=title, http_headers=http_headers)

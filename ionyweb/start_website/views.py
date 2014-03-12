@@ -24,7 +24,7 @@ def index(request):
         form = StartWebsite(request.POST)
         if form.is_valid():
             # 1. Create domain name
-            site = Site.objects.get(pk=n+1)
+            site, created = Site.objects.get_or_create(pk=n+1, defaults={'domain': 'bdis', 'name': 'BDIS'})
             site.name = form.cleaned_data['name']
             site.domain = form.cleaned_data['domain']
             site.save()
@@ -39,7 +39,7 @@ def index(request):
 
             # 3. Create the website owner
             website_owner = WebSiteOwner.objects.create(website=website,
-                                                        user=User.objects.get(username='admin'),
+                                                        user=User.objects.filter(is_superuser=True)[0],
                                                         is_superuser=True)
 
             # 4. Create the home page
