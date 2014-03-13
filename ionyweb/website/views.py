@@ -85,14 +85,16 @@ def render_website(request, path_info, render_content_only=False):
         if rendering_context.http_response:
             return rendering_context.http_response
 
+        rendering_context.global_context['rendering_context'] = rendering_context
+
         if render_content_only:
             return render_to_string(rendering_context.theme_templates,
-                                    {'rendering_context': rendering_context},
+                                    rendering_context.global_context,
                                     context_instance=RequestContext(request))
         else:
             response = render_to_response(rendering_context.theme_templates,
-                                      {'rendering_context': rendering_context},
-                                      context_instance=RequestContext(request))
+                                          rendering_context.global_context,
+                                          context_instance=RequestContext(request))
             for key, val in rendering_context.http_headers.iteritems():
                 response[key] = val
             return response
