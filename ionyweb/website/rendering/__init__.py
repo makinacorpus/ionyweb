@@ -19,12 +19,13 @@ class HTMLRendering:
     Basic item which contains informations about
     plugin or app.
     """
-    def __init__(self, content, medias=[], title=None, http_headers={}):
+    def __init__(self, content, medias=[], title=None, http_headers={}, global_context={}):
         self.status_code = 200
         self.content = content
         self.title = title
         self.medias = medias
         self.http_headers = http_headers
+        self.global_context = global_context
 
     def __unicode__(self):
         return self.content
@@ -78,6 +79,10 @@ class RenderingItem(object):
     @property
     def http_headers(self):
         return self.html_rendering.http_headers
+
+    @property
+    def global_context(self):
+        return self.html_rendering.global_context
 
     @property
     def title(self):
@@ -167,6 +172,7 @@ class RenderingContext(object):
         self._http_response = None
         self._page_title = []
         self.http_headers = {}
+        self.global_context = {}
         # Initialization
         self._populate_rendering_items()
 
@@ -186,6 +192,7 @@ class RenderingContext(object):
                     self.add_medias(rendering_app.medias)
                     # -- Add http headers in http headers list
                     self.add_http_headers(rendering_app.http_headers)
+                    self.add_global_context(rendering_app.global_context)
                     if rendering_app.title is not None:
                         self._page_title.append(rendering_app.title)
                 else:
@@ -474,6 +481,9 @@ class RenderingContext(object):
 
     def add_http_headers(self, http_headers={}):
         self.http_headers.update(http_headers)
+
+    def add_global_context(self, global_context={}):
+        self.global_context.update(global_context)
 
     @property
     def medias(self):
